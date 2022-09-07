@@ -32,7 +32,8 @@ private:
 
     struct Record{
         qint16 batID;
-        QDateTime date;
+//        QDateTime date;
+        QDate date;
         qint32 duration_sec;
         qreal voltage_start;
         qreal voltage_end;
@@ -41,6 +42,8 @@ private:
     };
 
     QList<Record> m_records;
+    QDate f_weekDisplay{};
+    qint16 f_batteryDisplay{0};
 
     QChart* m_chart = new QChart();
     QBarSet* m_set = new QBarSet("Minutes used",m_chart);
@@ -51,11 +54,15 @@ private:
     void readData();
     void fillTable();
     void configTable();
-
     void configChart();
+    void updateChart();
 
 private slots:
-    void on_tableWidget_cellClicked(int row, int column);
+    void s_rowClicked(int row, int column);
+    void s_buttonFirst();
+    void s_buttonLast();
+    void s_buttonNext();
+    void s_buttonPrev();
 };
 
 #endif // MAINWINDOW_H

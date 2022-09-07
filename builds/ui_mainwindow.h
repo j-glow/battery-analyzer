@@ -60,8 +60,8 @@ public:
         QTableWidgetItem *__qtablewidgetitem2 = new QTableWidgetItem();
         tableWidget->setHorizontalHeaderItem(2, __qtablewidgetitem2);
         tableWidget->setObjectName(QString::fromUtf8("tableWidget"));
-        tableWidget->setMinimumSize(QSize(350, 0));
-        tableWidget->setMaximumSize(QSize(350, 16777215));
+        tableWidget->setMinimumSize(QSize(300, 0));
+        tableWidget->setMaximumSize(QSize(300, 16777215));
         tableWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         tableWidget->setAlternatingRowColors(true);
         tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
