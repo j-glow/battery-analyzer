@@ -138,11 +138,11 @@ public:
         ___qtablewidgetitem1->setText(QCoreApplication::translate("MainWindow", "Use Count", nullptr));
         QTableWidgetItem *___qtablewidgetitem2 = tableWidget->horizontalHeaderItem(2);
         ___qtablewidgetitem2->setText(QCoreApplication::translate("MainWindow", "Total time used [min]", nullptr));
-        buttonFirst->setText(QCoreApplication::translate("MainWindow", "<<", nullptr));
-        buttonPrev->setText(QCoreApplication::translate("MainWindow", "<", nullptr));
+        buttonFirst->setText(QCoreApplication::translate("MainWindow", "<< First", nullptr));
+        buttonPrev->setText(QCoreApplication::translate("MainWindow", "< Previous", nullptr));
         week_display->setText(QCoreApplication::translate("MainWindow", "Current week", nullptr));
-        buttonNext->setText(QCoreApplication::translate("MainWindow", ">", nullptr));
-        buttonLast->setText(QCoreApplication::translate("MainWindow", ">>", nullptr));
+        buttonNext->setText(QCoreApplication::translate("MainWindow", "Next >", nullptr));
+        buttonLast->setText(QCoreApplication::translate("MainWindow", "Last >>", nullptr));
 #if QT_CONFIG(tooltip)
         graphicsView->setToolTip(QCoreApplication::translate("MainWindow", "Select item to display its graph.", nullptr));
 #endif // QT_CONFIG(tooltip)

@@ -6,7 +6,7 @@
 #include <QChart>
 
 #include <QtCharts/QChartView>
-#include <QtCharts/QBarSeries>
+#include <QtCharts/QStackedBarSeries>
 #include <QtCharts/QBarSet>
 #include <QtCharts/QLegend>
 #include <QtCharts/QBarCategoryAxis>
@@ -46,8 +46,9 @@ private:
     qint16 f_batteryDisplay{0};
 
     QChart* m_chart = new QChart();
+    QVector<QBarSet*> m_sets[5];
     QBarSet* m_set = new QBarSet("Minutes used",m_chart);
-    QBarSeries* m_series = new QBarSeries(m_chart);
+    QStackedBarSeries* m_series = new QStackedBarSeries(m_chart);
     QBarCategoryAxis* m_axis_x = new QBarCategoryAxis(m_chart);
     QValueAxis* m_axis_y = new QValueAxis(m_chart);
 
@@ -56,6 +57,8 @@ private:
     void configTable();
     void configChart();
     void updateChart();
+    void checkButtons();
+    void chooseDir();
 
 private slots:
     void s_rowClicked(int row, int column);

@@ -59,6 +59,7 @@ void MainWindow::readData(){
     if(!file.open(QIODevice::ReadOnly)){
         qCritical() << "Could not open file!";
         qCritical() << file.errorString();
+        chooseDir();
     }
 
 
@@ -135,11 +136,22 @@ void MainWindow::configChart(){
 void MainWindow::s_rowClicked(int row, [[maybe_unused]]int column)
 {
     f_batteryDisplay=ui->tableWidget->item(row,0)->text().toInt();
-    if(QDate::currentDate().dayOfWeek()==1){
-        f_weekDisplay=QDate::currentDate();
+
+    QDate mostRecent(1800,1,1);
+
+    for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end();i++){
+
+        if(i->batID == f_batteryDisplay && i->date > mostRecent){
+            mostRecent=i->date;
+        }
+    }
+
+
+    if(mostRecent.dayOfWeek()==1){
+        f_weekDisplay=mostRecent;
     }
     else{
-        f_weekDisplay=QDate::currentDate().addDays(1-QDate::currentDate().dayOfWeek());
+        f_weekDisplay=mostRecent.addDays(1-mostRecent.dayOfWeek());
     }
     updateChart();
 }
@@ -153,21 +165,25 @@ void MainWindow::updateChart(){
     for(qint8 i = 0; i<7;i++){
         m_set->append(0);
     }
-
     for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end();i++){
         if(i->batID == f_batteryDisplay && i->date>=f_weekDisplay && i->date<f_weekDisplay.addDays(7)){
-            m_set->insert(f_weekDisplay.dayOfWeek()-1,m_set->at(f_weekDisplay.dayOfWeek()-1)+i->duration_sec/60);
+            m_set->replace(i->date.dayOfWeek()-1,qreal(m_set->at(i->date.dayOfWeek()-1)+i->duration_sec)/60);
 
             if(max<(i->duration_sec)){
                 max=(i->duration_sec);
             }
         }
     }
+    qInfo()<<"week content:";
+    for(int i=0;i<m_set->count();i++){
+        qInfo()<<m_set->at(i);
+    }
 
     m_axis_y->setRange(0,max/60);
     m_series->append(m_set);
     m_chart->setTitle("BatteryID: "+QString::number(f_batteryDisplay));
     ui->week_display->setText(f_weekDisplay.toString("dd.MM.yyyy") + " - " + f_weekDisplay.addDays(6).toString("dd.MM.yyyy"));
+    checkButtons();
 }
 
 void MainWindow::s_buttonFirst()
@@ -222,4 +238,40 @@ void MainWindow::s_buttonPrev()
         f_weekDisplay=f_weekDisplay.addDays(-7);
         updateChart();
     }
+}
+
+
+void MainWindow::checkButtons(){
+    QDate min=f_weekDisplay;
+    QDate max=f_weekDisplay;
+
+    for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end();i++){
+        if(i->batID == f_batteryDisplay && i->date > max){
+            max=i->date;
+        }
+        if(i->batID == f_batteryDisplay && i->date < min){
+            min=i->date;
+        }
+    }
+
+    if(min==f_weekDisplay){
+        ui->buttonFirst->setEnabled(false);
+        ui->buttonPrev->setEnabled(false);
+    }
+    if(min!=f_weekDisplay){
+        ui->buttonFirst->setEnabled(true);
+        ui->buttonPrev->setEnabled(true);
+    }
+    if(max==f_weekDisplay){
+        ui->buttonLast->setEnabled(false);
+        ui->buttonNext->setEnabled(false);
+    }
+    if(max!=f_weekDisplay){
+        ui->buttonLast->setEnabled(true);
+        ui->buttonNext->setEnabled(true);
+    }
+}
+
+void MainWindow::chooseDir(){
+//choose new data file directory
 }

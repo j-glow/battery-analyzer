@@ -97,14 +97,14 @@
           <item>
            <widget class="QPushButton" name="buttonFirst">
             <property name="text">
-             <string>&lt;&lt;</string>
+             <string>&lt;&lt; First</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="buttonPrev">
             <property name="text">
-             <string>&lt;</string>
+             <string>&lt; Previous</string>
             </property>
            </widget>
           </item>
@@ -118,14 +118,14 @@
           <item>
            <widget class="QPushButton" name="buttonNext">
             <property name="text">
-             <string>&gt;</string>
+             <string>Next &gt;</string>
             </property>
            </widget>
           </item>
           <item>
            <widget class="QPushButton" name="buttonLast">
             <property name="text">
-             <string>&gt;&gt;</string>
+             <string>Last &gt;&gt;</string>
             </property>
            </widget>
           </item>
