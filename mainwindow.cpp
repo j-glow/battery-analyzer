@@ -167,14 +167,14 @@ void MainWindow::updateChart(){
     }
     for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end();i++){
         if(i->batID == f_batteryDisplay && i->date>=f_weekDisplay && i->date<f_weekDisplay.addDays(7)){
-            m_set->replace(i->date.dayOfWeek()-1,qreal(m_set->at(i->date.dayOfWeek()-1)+i->duration_sec)/60);
+            m_set->replace(i->date.dayOfWeek()-1,m_set->at(i->date.dayOfWeek()-1)+qreal(i->duration_sec)/60);
 
             if(max<(i->duration_sec)){
                 max=(i->duration_sec);
             }
         }
     }
-    qInfo()<<"week content:";
+    qInfo()<<"\n\n\n\nweek content:";
     for(int i=0;i<m_set->count();i++){
         qInfo()<<m_set->at(i);
     }
