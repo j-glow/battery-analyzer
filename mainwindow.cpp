@@ -34,32 +34,36 @@ MainWindow::MainWindow(QWidget *parent)
             this,SLOT(s_buttonNext()));
     connect(ui->buttonPrev,SIGNAL(clicked()),
             this,SLOT(s_buttonPrev()));
-    connect(ui->tableWidget,SIGNAL(cellClicked(int,int)),
+    connect(ui->batteryTable,SIGNAL(cellClicked(int,int)),
             this,SLOT(s_rowClicked(int,int)));
+    connect(m_set,SIGNAL(clicked(int)),
+            this,SLOT(showDay(int)));
+    connect(ui->buttonLoad,SIGNAL(clicked()),
+            this,SLOT(s_loadFile()));
 
     readData();
+
     configTable();
     fillTable();
 
     configChart();
-
 }
 
 MainWindow::~MainWindow()
 {
     delete m_chart;
-
     delete ui;
 }
 
-void MainWindow::readData(){
+void MainWindow::readData()
+{
     QFile file("C:/Users/jakub.glowacki/Documents/Projekty/battery/battery.dat.txt");
 
 
     if(!file.open(QIODevice::ReadOnly)){
         qCritical() << "Could not open file!";
         qCritical() << file.errorString();
-        chooseDir();
+        s_loadFile();
     }
 
 
@@ -69,6 +73,7 @@ void MainWindow::readData(){
 
         record.batID=list[0].toInt();
         record.date=QDate::fromString(list[1].split(' ')[0], "dd.MM.yyyy");
+        record.time=QTime::fromString(list[1].split(' ')[1], "hh:mm:ss");
         record.duration_sec=list[2].toInt();
         record.voltage_start=list[3].toDouble();
         record.voltage_end=list[4].toDouble();
@@ -80,12 +85,14 @@ void MainWindow::readData(){
     file.close();
 }
 
-void MainWindow::configTable(){
-    ui->tableWidget->QTableView::setEditTriggers(QAbstractItemView::NoEditTriggers);
-    ui->tableWidget->horizontalHeader()->setMaximumSectionSize(80);
+void MainWindow::configTable()
+{
+    ui->batteryTable->QTableView::setEditTriggers(QAbstractItemView::NoEditTriggers);
+    ui->batteryTable->horizontalHeader()->setMaximumSectionSize(80);
 }
 
-void MainWindow::fillTable(){
+void MainWindow::fillTable()
+{
     QMap<qint16, QVector<qint16>> battery;
 
     for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end(); i++){
@@ -95,7 +102,7 @@ void MainWindow::fillTable(){
         battery[i->batID][0]++;
         battery[i->batID][1]+=i->duration_sec;
     }
-    ui->tableWidget->setRowCount(battery.count());
+    ui->batteryTable->setRowCount(battery.count());
 
     qint16 j = 0;
     for(QMap<qint16, QVector<qint16>>::iterator i = battery.begin(); i != battery.end(); i++){
@@ -107,14 +114,15 @@ void MainWindow::fillTable(){
         count->setData(Qt::EditRole,i.value()[0]);
         time->setData(Qt::EditRole,i.value()[1]/60);
 
-        ui->tableWidget->setItem(j,0,id);
-        ui->tableWidget->setItem(j,1,count);
-        ui->tableWidget->setItem(j,2,time);
+        ui->batteryTable->setItem(j,0,id);
+        ui->batteryTable->setItem(j,1,count);
+        ui->batteryTable->setItem(j,2,time);
         j++;
     }
 }
 
-void MainWindow::configChart(){
+void MainWindow::configChart()
+{
     ui->graphicsView->setChart(m_chart);
 
     m_chart->addSeries(m_series);
@@ -135,17 +143,15 @@ void MainWindow::configChart(){
 
 void MainWindow::s_rowClicked(int row, [[maybe_unused]]int column)
 {
-    f_batteryDisplay=ui->tableWidget->item(row,0)->text().toInt();
+    f_batteryDisplay=ui->batteryTable->item(row,0)->text().toInt();
 
     QDate mostRecent(1800,1,1);
 
     for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end();i++){
-
         if(i->batID == f_batteryDisplay && i->date > mostRecent){
             mostRecent=i->date;
         }
     }
-
 
     if(mostRecent.dayOfWeek()==1){
         f_weekDisplay=mostRecent;
@@ -156,7 +162,8 @@ void MainWindow::s_rowClicked(int row, [[maybe_unused]]int column)
     updateChart();
 }
 
-void MainWindow::updateChart(){
+void MainWindow::updateChart()
+{
     qint32 max{0};
 
     while(m_set->count()!=0){
@@ -240,7 +247,6 @@ void MainWindow::s_buttonPrev()
     }
 }
 
-
 void MainWindow::checkButtons(){
     QDate min=f_weekDisplay;
     QDate max=f_weekDisplay.addDays(6);
@@ -272,6 +278,32 @@ void MainWindow::checkButtons(){
     }
 }
 
-void MainWindow::chooseDir(){
-//choose new data file directory
+void MainWindow::showDay(int day)
+{
+    ui->recordTable->setRowCount(0);
+    qint16 j=0;
+    for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end(); i++)
+    {
+
+        if(i->batID==f_batteryDisplay && i->date==f_weekDisplay.addDays(day))
+        {
+            ui->recordTable->setRowCount(ui->recordTable->rowCount()+1);
+            auto start = new QTableWidgetItem;
+            auto finish = new QTableWidgetItem;
+            auto duration = new QTableWidgetItem;
+
+            start->setData(Qt::EditRole,i->time.toString("hh:mm:ss"));
+            finish->setData(Qt::EditRole,i->time.addSecs(i->duration_sec).toString("hh:mm:ss"));
+            duration->setData(Qt::EditRole,qreal(i->duration_sec)/60);
+
+            ui->recordTable->setItem(j,0,start);
+            ui->recordTable->setItem(j,1,finish);
+            ui->recordTable->setItem(j,2,duration);
+            j++;
+        }
+    }
+}
+
+void MainWindow::s_loadFile(){
+//pass
 }

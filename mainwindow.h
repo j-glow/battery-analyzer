@@ -32,8 +32,8 @@ private:
 
     struct Record{
         qint16 batID;
-//        QDateTime date;
         QDate date;
+        QTime time;
         qint32 duration_sec;
         qreal voltage_start;
         qreal voltage_end;
@@ -58,7 +58,6 @@ private:
     void configChart();
     void updateChart();
     void checkButtons();
-    void chooseDir();
 
 private slots:
     void s_rowClicked(int row, int column);
@@ -66,6 +65,8 @@ private slots:
     void s_buttonLast();
     void s_buttonNext();
     void s_buttonPrev();
+    void s_loadFile();
+    void showDay(int day);
 };
 
 #endif // MAINWINDOW_H
