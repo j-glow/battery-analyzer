@@ -243,7 +243,7 @@ void MainWindow::s_buttonPrev()
 
 void MainWindow::checkButtons(){
     QDate min=f_weekDisplay;
-    QDate max=f_weekDisplay;
+    QDate max=f_weekDisplay.addDays(6);
 
     for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end();i++){
         if(i->batID == f_batteryDisplay && i->date > max){
@@ -262,11 +262,11 @@ void MainWindow::checkButtons(){
         ui->buttonFirst->setEnabled(true);
         ui->buttonPrev->setEnabled(true);
     }
-    if(max==f_weekDisplay){
+    if(max==f_weekDisplay.addDays(6)){
         ui->buttonLast->setEnabled(false);
         ui->buttonNext->setEnabled(false);
     }
-    if(max!=f_weekDisplay){
+    if(max!=f_weekDisplay.addDays(6)){
         ui->buttonLast->setEnabled(true);
         ui->buttonNext->setEnabled(true);
     }
