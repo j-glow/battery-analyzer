@@ -8,15 +8,6 @@
 #include <QString>
 #include <QChart>
 
-#include <QtCharts/QChartView>
-#include <QtCharts/QBarSeries>
-#include <QtCharts/QBarSet>
-#include <QtCharts/QLegend>
-#include <QtCharts/QBarCategoryAxis>
-#include <QtCharts/QValueAxis>
-
-#include <QtCharts/QChart>
-
 QT_CHARTS_USE_NAMESPACE
 
 MainWindow::MainWindow(QWidget *parent)
@@ -47,6 +38,9 @@ MainWindow::MainWindow(QWidget *parent)
     fillTable();
 
     configChart();
+
+    ui->splitter->setStretchFactor(0,3);
+    ui->splitter->setStretchFactor(1,1);
 }
 
 MainWindow::~MainWindow()
@@ -164,14 +158,36 @@ void MainWindow::s_rowClicked(int row, [[maybe_unused]]int column)
 
 void MainWindow::updateChart()
 {
-    qint32 max{0};
+//    while(m_set->count()!=0){
+//        m_set->remove(m_set->count()-1);
+//    }
 
-    while(m_set->count()!=0){
-        m_set->remove(m_set->count()-1);
+    for(qint16 i{0}; i<m_sets.count();i++){
+        delete m_sets[i];
+        m_sets[i]=nullptr;
     }
-    for(qint8 i = 0; i<7;i++){
-        m_set->append(0);
+
+    qint8 days[7]={0,0,0,0,0,0,0};
+    for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end();i++){
+        if(i->batID == f_batteryDisplay && i->date>=f_weekDisplay && i->date<f_weekDisplay.addDays(7)){
+            days[f_weekDisplay.dayOfWeek()-1]++;
+        }
     }
+    qint16 numOfSets{0};
+    for(auto i : days){
+        if (i>numOfSets){
+            numOfSets=i;
+        }
+    }
+    for(qint16 i{0};i<numOfSets;i++)
+    {
+        m_sets[i]=new QBarSet(QString::number(i),m_chart);
+        for(qint8 j = 0; j<7;j++){
+            m_sets[j]->append(0);
+        }
+    }
+
+    qint32 max{0};
     for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end();i++){
         if(i->batID == f_batteryDisplay && i->date>=f_weekDisplay && i->date<f_weekDisplay.addDays(7)){
             m_set->replace(i->date.dayOfWeek()-1,m_set->at(i->date.dayOfWeek()-1)+qreal(i->duration_sec)/60);
@@ -181,13 +197,16 @@ void MainWindow::updateChart()
             }
         }
     }
-    qInfo()<<"\n\n\n\nweek content:";
-    for(int i=0;i<m_set->count();i++){
-        qInfo()<<m_set->at(i);
-    }
+//    qInfo()<<"\n\n\n\nweek content:";
+//    for(int i=0;i<m_set->count();i++){
+//        qInfo()<<m_set->at(i);
+//    }
 
     m_axis_y->setRange(0,max/60);
-    m_series->append(m_set);
+//    m_series->append(m_set);
+    for(qint16 i{0};i<numOfSets;i++){
+        m_series->append(m_sets[i]);
+    }
     m_chart->setTitle("BatteryID: "+QString::number(f_batteryDisplay));
     ui->week_display->setText(f_weekDisplay.toString("dd.MM.yyyy") + " - " + f_weekDisplay.addDays(6).toString("dd.MM.yyyy"));
     checkButtons();
@@ -292,9 +311,11 @@ void MainWindow::showDay(int day)
             auto finish = new QTableWidgetItem;
             auto duration = new QTableWidgetItem;
 
+            QString dur = QString::number(i->duration_sec/3600)+"h "+QString::number(i->duration_sec/60)+"min "+QString::number(i->duration_sec%60)+"s";
+
             start->setData(Qt::EditRole,i->time.toString("hh:mm:ss"));
             finish->setData(Qt::EditRole,i->time.addSecs(i->duration_sec).toString("hh:mm:ss"));
-            duration->setData(Qt::EditRole,qreal(i->duration_sec)/60);
+            duration->setData(Qt::EditRole,dur);
 
             ui->recordTable->setItem(j,0,start);
             ui->recordTable->setItem(j,1,finish);
@@ -305,5 +326,5 @@ void MainWindow::showDay(int day)
 }
 
 void MainWindow::s_loadFile(){
-//pass
+
 }
