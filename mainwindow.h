@@ -46,7 +46,6 @@ private:
 
     QChart* m_chart = new QChart();
     QVector<QBarSet*> m_sets;
-    QBarSet* m_set = new QBarSet("Minutes used",m_chart);
     QStackedBarSeries* m_series = new QStackedBarSeries(m_chart);
     QBarCategoryAxis* m_axis_x = new QBarCategoryAxis(m_chart);
     QValueAxis* m_axis_y = new QValueAxis(m_chart);
