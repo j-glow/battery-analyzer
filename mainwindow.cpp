@@ -39,6 +39,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     configChart();
 
+    //default splitter position ...
     ui->splitter->setStretchFactor(0,3);
     ui->splitter->setStretchFactor(1,1);
 }
@@ -95,7 +96,7 @@ void MainWindow::fillTable()
         }
         battery[i->batID][0]++;
         battery[i->batID][1]+=i->duration_sec;
-    }
+    }//filtering records as per battery not as per record
     ui->batteryTable->setRowCount(battery.count());
 
     qint16 j = 0;
@@ -112,7 +113,7 @@ void MainWindow::fillTable()
         ui->batteryTable->setItem(j,1,count);
         ui->batteryTable->setItem(j,2,time);
         j++;
-    }
+    }//inputing info into record table
 }
 
 void MainWindow::configChart()
@@ -133,6 +134,7 @@ void MainWindow::configChart()
     m_chart->axes(Qt::Vertical, m_series);
     m_chart->setTitle("Choose battery from table in order to see its usage history");
     m_chart->setAnimationOptions(QChart::SeriesAnimations);
+    m_chart->legend()->setVisible(true);
 }
 
 void MainWindow::s_rowClicked(int row, [[maybe_unused]]int column)
@@ -158,10 +160,11 @@ void MainWindow::s_rowClicked(int row, [[maybe_unused]]int column)
 
 void MainWindow::updateChart()
 {
-    for(auto i : m_sets){
-        delete i;
-        i=nullptr;
+    for(auto i{0}; i<m_sets.size();i++){
+        m_series->remove(m_sets[i]);
+        m_sets[i]=nullptr;
     }//clean up previous bars
+    m_sets.clear();
 
     qint8 days[7]={0,0,0,0,0,0,0};
     for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end();i++){
@@ -205,7 +208,7 @@ void MainWindow::updateChart()
     }//fill up bars based on records
 
     m_axis_y->setRange(0,max/60);
-    for(qint16 i{0};i<numOfSets;i++){
+    for(qint16 i{0};i<m_sets.size();i++){
         m_series->append(m_sets[i]);
     }
     m_chart->setTitle("BatteryID: "+QString::number(f_batteryDisplay));
