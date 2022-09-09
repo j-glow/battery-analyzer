@@ -158,52 +158,53 @@ void MainWindow::s_rowClicked(int row, [[maybe_unused]]int column)
 
 void MainWindow::updateChart()
 {
-//    while(m_set->count()!=0){
-//        m_set->remove(m_set->count()-1);
-//    }
-
-    for(qint16 i{0}; i<m_sets.count();i++){
-        delete m_sets[i];
-        m_sets[i]=nullptr;
-    }
+    for(auto i : m_sets){
+        delete i;
+        i=nullptr;
+    }//clean up previous bars
 
     qint8 days[7]={0,0,0,0,0,0,0};
     for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end();i++){
         if(i->batID == f_batteryDisplay && i->date>=f_weekDisplay && i->date<f_weekDisplay.addDays(7)){
             days[f_weekDisplay.dayOfWeek()-1]++;
         }
-    }
+    }//find how many values for each day
+
     qint16 numOfSets{0};
     for(auto i : days){
         if (i>numOfSets){
             numOfSets=i;
         }
-    }
+    }//take in maximum value to use as limiter for bar array creator
+
     for(qint16 i{0};i<numOfSets;i++)
     {
-        m_sets[i]=new QBarSet(QString::number(i),m_chart);
+        if(m_sets.size()<=i) m_sets.push_back(new QBarSet(QString::number(i),m_chart));
+        else m_sets[i]=new QBarSet(QString::number(i),m_chart);
+
         for(qint8 j = 0; j<7;j++){
-            m_sets[j]->append(0);
+            m_sets[i]->append(0);
         }
-    }
+    }//create empty 0-filled bars
 
     qint32 max{0};
+    qint16 j{0};
     for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end();i++){
         if(i->batID == f_batteryDisplay && i->date>=f_weekDisplay && i->date<f_weekDisplay.addDays(7)){
-            m_set->replace(i->date.dayOfWeek()-1,m_set->at(i->date.dayOfWeek()-1)+qreal(i->duration_sec)/60);
+            j=0;
+            while(m_sets[j]->at(i->date.dayOfWeek()-1)){
+                j++;
+            }//find first empty set
+
+            m_sets[j]->replace(i->date.dayOfWeek()-1,i->duration_sec);
 
             if(max<(i->duration_sec)){
                 max=(i->duration_sec);
             }
         }
-    }
-//    qInfo()<<"\n\n\n\nweek content:";
-//    for(int i=0;i<m_set->count();i++){
-//        qInfo()<<m_set->at(i);
-//    }
+    }//fill up bars based on records
 
     m_axis_y->setRange(0,max/60);
-//    m_series->append(m_set);
     for(qint16 i{0};i<numOfSets;i++){
         m_series->append(m_sets[i]);
     }
