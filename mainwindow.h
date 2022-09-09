@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include <QDateTime>
-#include <QChart>
 
 #include <QtCharts/QChartView>
 #include <QtCharts/QStackedBarSeries>
