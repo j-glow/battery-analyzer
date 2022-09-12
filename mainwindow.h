@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QString>
 #include <QChart>
+#include <QFileDialog>
 
 #include <QtCharts/QChartView>
 #include <QtCharts/QStackedBarSeries>

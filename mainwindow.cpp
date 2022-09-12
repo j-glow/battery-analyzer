@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "dirchoosedialog.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -335,9 +334,5 @@ void MainWindow::s_showDay(int day)
 }
 
 void MainWindow::s_loadFile(){
-    d = new dirChooseDialog(this);
-    d->setModal(true);
-    d->show();
-    connect(d,SIGNAL(sendDir(QString)),
-            this,SLOT(s_readData(QString)));
+    s_readData(QFileDialog::getOpenFileName());
 }
