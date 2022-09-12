@@ -26,11 +26,8 @@ MainWindow::MainWindow(QWidget *parent)
     connect(ui->buttonLoad,SIGNAL(clicked()),
             this,SLOT(s_loadFile()));
 
-    readData();
-
+    s_readData();
     configTable();
-    fillTable();
-
     configChart();
 
     //default splitter position ...
@@ -44,9 +41,9 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
-void MainWindow::readData()
+void MainWindow::s_readData(QString path)
 {
-    QFile file("C:/Users/jakub.glowacki/Documents/Projekty/battery/battery.dat.txt");
+    QFile file(path);
 
 
     if(!file.open(QIODevice::ReadOnly)){
@@ -72,6 +69,7 @@ void MainWindow::readData()
         m_records << record;
     }
     file.close();
+    fillTable();
 }
 
 void MainWindow::configTable()
@@ -156,7 +154,7 @@ void MainWindow::updateChart()
 {
     for(auto i{0}; i<m_sets.size();i++){
         disconnect(m_sets[i],SIGNAL(clicked(int)),
-                   this,SLOT(showDay(int)));
+                   this,SLOT(s_showDay(int)));
         m_series->remove(m_sets[i]);
         m_sets[i]=nullptr;
     }//clean up previous bars
@@ -211,7 +209,7 @@ void MainWindow::updateChart()
     for(qint16 i{0};i<m_sets.size();i++){
         m_series->append(m_sets[i]);
         connect(m_sets[i],SIGNAL(clicked(int)),
-                this,SLOT(showDay(int)));
+                this,SLOT(s_showDay(int)));
     }
 
     m_chart->setTitle("BatteryID: "+QString::number(f_batteryDisplay));
@@ -304,7 +302,7 @@ void MainWindow::checkButtons(){
     }
 }
 
-void MainWindow::showDay(int day)
+void MainWindow::s_showDay(int day)
 {
     ui->day_indicator->setText("Battery: " + QString::number(f_batteryDisplay) +
                                "\tDay: " +f_weekDisplay.addDays(day).toString("dd.MM.yyyy"));
@@ -336,7 +334,9 @@ void MainWindow::showDay(int day)
 }
 
 void MainWindow::s_loadFile(){
-    dirChooseDialog d;
-    d.setModal(true);
-    d.exec();
+    d = new dirChooseDialog(this);
+    d->setModal(true);
+    d->show();
+    connect(d,SIGNAL(sendDir(QString)),
+            this,SLOT(s_readData(QString)));
 }

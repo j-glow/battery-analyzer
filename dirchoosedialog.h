@@ -21,10 +21,11 @@ private slots:
     void cancelClicked();
 
 signals:
-    void sendDir();
+    void sendDir(QString path);
 
 private:
     Ui::dirChooseDialog *ui;
+    QFileSystemModel* dir;
 };
 
 #endif // DIRCHOOSEDIALOG_H

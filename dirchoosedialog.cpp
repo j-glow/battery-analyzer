@@ -1,6 +1,8 @@
 #include "dirchoosedialog.h"
 #include "ui_dirchoosedialog.h"
 
+#include <QDebug>
+
 dirChooseDialog::dirChooseDialog(QWidget *parent) :
     QDialog(parent),
     ui(new Ui::dirChooseDialog)
@@ -12,9 +14,12 @@ dirChooseDialog::dirChooseDialog(QWidget *parent) :
     connect(ui->cancelButton,SIGNAL(clicked()),
             this, SLOT(cancelClicked()));
 
-    QFileSystemModel* dir = new QFileSystemModel(this);
-
+    dir = new QFileSystemModel(this);
+    dir->setRootPath("C:/");
     ui->treeView->setModel(dir);
+    ui->treeView->setColumnWidth(0,175);
+    ui->treeView->setColumnWidth(1,60);
+    ui->treeView->setColumnWidth(2,60);
 }
 
 dirChooseDialog::~dirChooseDialog()
@@ -24,10 +29,9 @@ dirChooseDialog::~dirChooseDialog()
 
 void dirChooseDialog::acceptClicked()
 {
-
+    emit sendDir(dir->filePath(ui->treeView->currentIndex()));
     this->close();
 }
-
 
 void dirChooseDialog::cancelClicked()
 {

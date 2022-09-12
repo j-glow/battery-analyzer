@@ -17,6 +17,7 @@
 #include <QtCharts/QValueAxis>
 #include <QtCharts/QChart>
 
+#include "dirchoosedialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -36,6 +37,7 @@ public:
 
 private:
     Ui::MainWindow* ui;
+    dirChooseDialog* d;
 
     struct Record{
         qint16 batID;
@@ -58,7 +60,6 @@ private:
     QBarCategoryAxis* m_axis_x = new QBarCategoryAxis(m_chart);
     QValueAxis* m_axis_y = new QValueAxis(m_chart);
 
-    void readData();
     void fillTable();
     void configTable();
     void configChart();
@@ -72,7 +73,8 @@ private slots:
     void s_buttonNext();
     void s_buttonPrev();
     void s_loadFile();
-    void showDay(int day);
+    void s_showDay(int day);
+    void s_readData(QString path = "C:/Users/jakub.glowacki/Documents/Projekty/battery/battery.dat.txt");
 };
 
 #endif // MAINWINDOW_H
