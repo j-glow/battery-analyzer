@@ -2,8 +2,6 @@
 #include "ui_mainwindow.h"
 #include "dirchoosedialog.h"
 
-
-
 QT_CHARTS_USE_NAMESPACE
 
 MainWindow::MainWindow(QWidget *parent)
@@ -214,6 +212,10 @@ void MainWindow::updateChart()
     m_chart->setTitle("BatteryID: "+QString::number(f_batteryDisplay));
     ui->week_display->setText(f_weekDisplay.toString("dd.MM.yyyy") + " - " + f_weekDisplay.addDays(6).toString("dd.MM.yyyy"));
     checkButtons();
+
+    qint8 i{0};
+    while(m_sets[0]->at(i)==0) i++;
+    s_showDay(i);
 }
 
 void MainWindow::s_buttonFirst()

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>936</width>
+    <width>938</width>
     <height>601</height>
    </rect>
   </property>
@@ -157,7 +157,7 @@
           </item>
          </layout>
         </widget>
-        <widget class="QWidget" name="">
+        <widget class="QWidget" name="layoutWidget">
          <layout class="QHBoxLayout" name="horizontalLayout_2">
           <item>
            <layout class="QVBoxLayout" name="verticalLayout_3">
@@ -190,6 +190,9 @@
                 <width>16777215</width>
                 <height>500</height>
                </size>
+              </property>
+              <property name="toolTip">
+               <string extracomment="Click on a bar to display more info.">Click on a bar to display more info.</string>
               </property>
               <property name="editTriggers">
                <set>QAbstractItemView::NoEditTriggers</set>
