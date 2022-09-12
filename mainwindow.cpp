@@ -47,8 +47,7 @@ void MainWindow::s_readData(QString path)
 
 
     if(!file.open(QIODevice::ReadOnly)){
-        qCritical() << "Could not open file!";
-        qCritical() << file.errorString();
+        QMessageBox::warning(this, "Error", "Could not open file!");
         s_loadFile();
     }
 
