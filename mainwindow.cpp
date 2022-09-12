@@ -1,11 +1,8 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "dirchoosedialog.h"
 
-#include <QFile>
-#include <QDebug>
-#include <QMap>
-#include <QString>
-#include <QChart>
+
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -131,8 +128,7 @@ void MainWindow::configChart()
     m_chart->axes(Qt::Vertical, m_series);
     m_chart->setTitle("Choose battery from table in order to see its usage history");
     m_chart->setAnimationOptions(QChart::SeriesAnimations);
-    m_chart->legend()->setVisible(true); //change to false after bugfixing implicit
-                                        //type conversion after appending bar set to series
+    m_chart->legend()->setVisible(false);
 }
 
 void MainWindow::s_rowClicked(int row, [[maybe_unused]]int column)
@@ -190,7 +186,7 @@ void MainWindow::updateChart()
         }
     }//create empty 0-filled bars
 
-    qint32 max{0};
+    qint32 dailyDuration[7]={0,0,0,0,0,0,0};
     qint16 j{0};
     for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end();i++){
         if(i->batID == f_batteryDisplay && i->date>=f_weekDisplay && i->date<f_weekDisplay.addDays(7)){
@@ -199,15 +195,19 @@ void MainWindow::updateChart()
                 j++;
             }//find first empty set
 
-            m_sets[j]->replace(i->date.dayOfWeek()-1,i->duration_sec);
+            m_sets[j]->replace(i->date.dayOfWeek()-1,qreal(i->duration_sec)/60);
 
-            if(max<(i->duration_sec)){
-                max=(i->duration_sec);
-            }
+            dailyDuration[i->date.dayOfWeek()-1]+=(i->duration_sec);
         }
     }//fill up bars based on records
 
-    m_axis_y->setRange(0,max/60);
+    qint32 max{0};
+    for(qint8 i=0;i<7;i++){
+        if(max<dailyDuration[i]){
+            max=dailyDuration[i];
+        }
+    }//find max day duration
+    m_axis_y->setRange(0,qreal(max)/60);
     for(qint16 i{0};i<m_sets.size();i++){
         m_series->append(m_sets[i]);
         connect(m_sets[i],SIGNAL(clicked(int)),
@@ -306,7 +306,8 @@ void MainWindow::checkButtons(){
 
 void MainWindow::showDay(int day)
 {
-
+    ui->day_indicator->setText("Battery: " + QString::number(f_batteryDisplay) +
+                               "\tDay: " +f_weekDisplay.addDays(day).toString("dd.MM.yyyy"));
     ui->recordTable->setRowCount(0);
     qint16 j=0;
     for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end(); i++)
@@ -319,7 +320,8 @@ void MainWindow::showDay(int day)
             auto finish = new QTableWidgetItem;
             auto duration = new QTableWidgetItem;
 
-            QString dur = QString::number(i->duration_sec/3600)+"h "+QString::number(i->duration_sec/60)+"min "+QString::number(i->duration_sec%60)+"s";
+            QString dur = QString::number(i->duration_sec/3600)+"h "+
+                    QString::number(i->duration_sec/60)+"min "+QString::number(i->duration_sec%60)+"s";
 
             start->setData(Qt::EditRole,i->time.toString("hh:mm:ss"));
             finish->setData(Qt::EditRole,i->time.addSecs(i->duration_sec).toString("hh:mm:ss"));
@@ -334,5 +336,7 @@ void MainWindow::showDay(int day)
 }
 
 void MainWindow::s_loadFile(){
-
+    dirChooseDialog d;
+    d.setModal(true);
+    d.exec();
 }

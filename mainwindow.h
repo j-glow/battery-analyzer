@@ -3,6 +3,11 @@
 
 #include <QMainWindow>
 #include <QDateTime>
+#include <QFile>
+#include <QDebug>
+#include <QMap>
+#include <QString>
+#include <QChart>
 
 #include <QtCharts/QChartView>
 #include <QtCharts/QStackedBarSeries>
@@ -12,8 +17,11 @@
 #include <QtCharts/QValueAxis>
 #include <QtCharts/QChart>
 
+
 QT_BEGIN_NAMESPACE
-namespace Ui { class MainWindow; }
+namespace Ui {
+class MainWindow;
+}
 QT_END_NAMESPACE
 
 QT_CHARTS_USE_NAMESPACE
@@ -27,7 +35,7 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow *ui;
+    Ui::MainWindow* ui;
 
     struct Record{
         qint16 batID;
