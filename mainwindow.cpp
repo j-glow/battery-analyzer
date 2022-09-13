@@ -49,6 +49,7 @@ void MainWindow::s_readData(QString path)
         s_loadFile();
     }
 
+    m_records.clear();
 
     while (!file.atEnd()) {
         auto list = file.readLine().split(',');
