@@ -27,27 +27,20 @@
    </property>
    <property name="styleSheet">
     <string notr="true">.QPushButton {
-	background:#528fcc;
-	background-color:#bddbfa;
-	border-radius:42px;
-
+	background-color:#80b5ea;
+	background:#80b5ea;
+	border-radius:10px;
 	color:#ffffff;
-	font-family:Arial;
+	font-family:-apple-system, system-ui, system-ui, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, &quot;Fira Sans&quot;, Ubuntu, Oxygen, 			&quot;Oxygen Sans&quot;, Cantarell, &quot;Droid Sans&quot;, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Lucida Grande&quot;, 		Helvetica, Arial, sans-serif;
 	font-size:16px;
 	padding:25px 0px;
 	text-decoration:none;
 }
-.QPushButton:hover {
-	background:#bddbfa;
-	background-color:#80b5ea;
+.QPushButton:disabled{
+	background:#C0D6E4;
 }
-.QPushButton:active {
-	background:#80b5ea;
-	background-color:#80b5ea;
-}
-.QPushButton:inactive{
-	background: #97abbf;
-	background-color:#80b5ea;
+.QPushButton:pressed{
+	background:#0A75AD;
 }
 
 .QLabel{

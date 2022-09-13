@@ -355,7 +355,7 @@ void MainWindow::s_showDay(int day)
             auto duration = new QTableWidgetItem;
 
             QString dur = QString::number(i->duration_sec/3600)+"h "+
-                    QString::number(i->duration_sec/60)+"min "+QString::number(i->duration_sec%60)+"s";
+                    QString::number(i->duration_sec/60%60)+"min "+QString::number(i->duration_sec%60)+"s";
 
             start->setData(Qt::EditRole,i->time.toString("hh:mm:ss"));
             finish->setData(Qt::EditRole,i->time.addSecs(i->duration_sec).toString("hh:mm:ss"));
