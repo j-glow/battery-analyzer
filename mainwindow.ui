@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>938</width>
+    <width>963</width>
     <height>601</height>
    </rect>
   </property>
@@ -20,6 +20,43 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true">.QPushButton {
+	background:#528fcc;
+	background-color:#bddbfa;
+	border-radius:42px;
+
+	color:#ffffff;
+	font-family:Arial;
+	font-size:15px;
+	font-weight:bold;
+	padding:25px 0px;
+	text-decoration:none;
+}
+.QPushButton:hover {
+	background:#bddbfa;
+	background-color:#80b5ea;
+}
+.QPushButton:active {
+	background:#80b5ea;
+	background-color:#80b5ea;
+}
+.QPushButton:inactive{
+	background: #97abbf;
+	background-color:#80b5ea;
+}
+
+.QLabel{
+font-family: -apple-system, system-ui, system-ui, &quot;Segoe UI&quot;, Roboto, &quot;Helvetica Neue&quot;, &quot;Fira Sans&quot;, Ubuntu, Oxygen, 			&quot;Oxygen Sans&quot;, Cantarell, &quot;Droid Sans&quot;, &quot;Apple Color Emoji&quot;, &quot;Segoe UI Emoji&quot;, &quot;Segoe UI Symbol&quot;, &quot;Lucida Grande&quot;, 		Helvetica, Arial, sans-serif;
+font-size: 12px;
+font-weight: 600;
+color: #000000;
+text-decoration: none;
+font-style: normal;
+font-variant: normal;
+text-transform: none;
+}</string>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout_4">
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -27,13 +64,13 @@
        <widget class="QTableWidget" name="batteryTable">
         <property name="minimumSize">
          <size>
-          <width>300</width>
+          <width>325</width>
           <height>0</height>
          </size>
         </property>
         <property name="maximumSize">
          <size>
-          <width>300</width>
+          <width>350</width>
           <height>16777215</height>
          </size>
         </property>
@@ -71,10 +108,10 @@
          <bool>false</bool>
         </attribute>
         <attribute name="verticalHeaderMinimumSectionSize">
-         <number>20</number>
+         <number>40</number>
         </attribute>
         <attribute name="verticalHeaderDefaultSectionSize">
-         <number>20</number>
+         <number>40</number>
         </attribute>
         <attribute name="verticalHeaderStretchLastSection">
          <bool>false</bool>
@@ -107,6 +144,12 @@
            <layout class="QHBoxLayout" name="horizontalLayout">
             <item>
              <widget class="QPushButton" name="buttonFirst">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
                <string>&lt;&lt; First</string>
               </property>
@@ -114,6 +157,12 @@
             </item>
             <item>
              <widget class="QPushButton" name="buttonPrev">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
                <string>&lt; Previous</string>
               </property>
@@ -128,6 +177,12 @@
             </item>
             <item>
              <widget class="QPushButton" name="buttonNext">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
                <string>Next &gt;</string>
               </property>
@@ -135,6 +190,12 @@
             </item>
             <item>
              <widget class="QPushButton" name="buttonLast">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>0</height>
+               </size>
+              </property>
               <property name="text">
                <string>Last &gt;&gt;</string>
               </property>
@@ -181,7 +242,7 @@
               </property>
               <property name="minimumSize">
                <size>
-                <width>500</width>
+                <width>100</width>
                 <height>0</height>
                </size>
               </property>
@@ -265,7 +326,7 @@
              <widget class="QPushButton" name="buttonLoad">
               <property name="minimumSize">
                <size>
-                <width>100</width>
+                <width>0</width>
                 <height>0</height>
                </size>
               </property>

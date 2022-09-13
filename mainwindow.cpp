@@ -48,6 +48,7 @@ void MainWindow::s_readData(QString path)
         s_loadFile();
     }
 
+    m_records.clear();
 
     while (!file.atEnd()) {
         auto list = file.readLine().split(',');
@@ -72,6 +73,7 @@ void MainWindow::configTable()
 {
     ui->batteryTable->QTableView::setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->batteryTable->horizontalHeader()->setMaximumSectionSize(80);
+    ui->batteryTable->verticalScrollBar()->setMinimumWidth(80);
 }
 
 void MainWindow::fillTable()
@@ -209,7 +211,8 @@ void MainWindow::updateChart()
     }
 
     m_chart->setTitle("BatteryID: "+QString::number(f_batteryDisplay));
-    ui->week_display->setText(f_weekDisplay.toString("dd.MM.yyyy") + " - " + f_weekDisplay.addDays(6).toString("dd.MM.yyyy"));
+    ui->week_display->setText(f_weekDisplay.toString("dd.MM.yyyy") + " - "
+                              + f_weekDisplay.addDays(6).toString("dd.MM.yyyy"));
     checkButtons();
 
     qint8 i{0};
@@ -304,8 +307,15 @@ void MainWindow::checkButtons(){
 
 void MainWindow::s_showDay(int day)
 {
-    ui->day_indicator->setText("Battery: " + QString::number(f_batteryDisplay) +
-                               "\tDay: " +f_weekDisplay.addDays(day).toString("dd.MM.yyyy"));
+    if(f_batteryDisplay<10){
+        ui->day_indicator->setText("Battery: " + QString::number(f_batteryDisplay) +
+                                   "\t\tDay: " +f_weekDisplay.addDays(day).toString("dd.MM.yyyy"));
+    }
+    else{
+        ui->day_indicator->setText("Battery: " + QString::number(f_batteryDisplay) +
+                                   "\tDay: " +f_weekDisplay.addDays(day).toString("dd.MM.yyyy"));
+    }
+
     ui->recordTable->setRowCount(0);
     qint16 j=0;
     for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end(); i++)

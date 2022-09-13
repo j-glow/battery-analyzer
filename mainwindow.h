@@ -18,8 +18,6 @@
 #include <QtCharts/QValueAxis>
 #include <QtCharts/QChart>
 
-#include "dirchoosedialog.h"
-
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
@@ -38,7 +36,6 @@ public:
 
 private:
     Ui::MainWindow* ui;
-    dirChooseDialog* d;
 
     struct Record{
         qint16 batID;
