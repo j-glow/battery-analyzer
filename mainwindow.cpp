@@ -8,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    this->setStyleSheet("background: #575d63");
 
     connect(ui->buttonFirst,SIGNAL(clicked()),
             this,SLOT(s_buttonFirst()));
@@ -123,15 +123,14 @@ void MainWindow::configChart()
     m_axis_x->setCategories(date);
 
     m_chart->axes(Qt::Vertical, m_series);
-    m_chart->setTitle("Choose battery from table in order to see its usage history");
     m_chart->setAnimationOptions(QChart::SeriesAnimations);
     m_chart->legend()->setVisible(false);
 
     QLinearGradient backgroundGradient;
     backgroundGradient.setStart(QPointF(0, 0));
     backgroundGradient.setFinalStop(QPointF(0, 1));
-    backgroundGradient.setColorAt(0.0, QRgb(0xcde0f4));
-    backgroundGradient.setColorAt(1.0, QRgb(0xbddbfa));
+    backgroundGradient.setColorAt(0.0, QRgb(0x99c3ed));
+    backgroundGradient.setColorAt(1.0, QRgb(0x80b5ea));
     backgroundGradient.setCoordinateMode(QGradient::ObjectBoundingMode);
     m_chart->setBackgroundBrush(backgroundGradient);
 
@@ -300,7 +299,8 @@ void MainWindow::s_buttonPrev()
     }
 }
 
-void MainWindow::checkButtons(){
+void MainWindow::checkButtons()
+{
     QDate min=f_weekDisplay;
     QDate max=f_weekDisplay.addDays(6);
 
@@ -369,6 +369,7 @@ void MainWindow::s_showDay(int day)
     }
 }
 
-void MainWindow::s_loadFile(){
+void MainWindow::s_loadFile()
+{
     s_readData(QFileDialog::getOpenFileName());
 }
