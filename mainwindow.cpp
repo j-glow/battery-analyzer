@@ -67,13 +67,14 @@ void MainWindow::s_readData(QString path)
     }
     file.close();
     fillTable();
+    s_rowClicked(0,0);
 }
 
 void MainWindow::configTable()
 {
     ui->batteryTable->QTableView::setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->batteryTable->horizontalHeader()->setMaximumSectionSize(80);
-    ui->batteryTable->verticalScrollBar()->setMinimumWidth(80);
+
 }
 
 void MainWindow::fillTable()
@@ -125,6 +126,29 @@ void MainWindow::configChart()
     m_chart->setTitle("Choose battery from table in order to see its usage history");
     m_chart->setAnimationOptions(QChart::SeriesAnimations);
     m_chart->legend()->setVisible(false);
+
+    QLinearGradient backgroundGradient;
+    backgroundGradient.setStart(QPointF(0, 0));
+    backgroundGradient.setFinalStop(QPointF(0, 1));
+    backgroundGradient.setColorAt(0.0, QRgb(0xcde0f4));
+    backgroundGradient.setColorAt(1.0, QRgb(0xbddbfa));
+    backgroundGradient.setCoordinateMode(QGradient::ObjectBoundingMode);
+    m_chart->setBackgroundBrush(backgroundGradient);
+
+    QFont labelsFont;
+    labelsFont.setPixelSize(12);
+    m_axis_x->setLabelsFont(labelsFont);
+    m_axis_y->setLabelsFont(labelsFont);
+    labelsFont.setBold(true);
+    m_chart->setTitleFont(labelsFont);
+
+    QPen axisPen(QRgb(0x717c87));
+    axisPen.setWidth(2);
+    m_axis_x->setLinePen(axisPen);
+    m_axis_y->setLinePen(axisPen);
+    axisPen.setColor(QRgb(0xa9b0b7));
+    m_axis_x->setGridLinePen(axisPen);
+    m_axis_y->setGridLinePen(axisPen);
 }
 
 void MainWindow::s_rowClicked(int row, [[maybe_unused]]int column)
