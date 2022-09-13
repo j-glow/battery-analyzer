@@ -149,6 +149,7 @@ void MainWindow::configChart()
     axisPen.setColor(QRgb(0xa9b0b7));
     m_axis_x->setGridLinePen(axisPen);
     m_axis_y->setGridLinePen(axisPen);
+
 }
 
 void MainWindow::s_rowClicked(int row, [[maybe_unused]]int column)
@@ -229,6 +230,7 @@ void MainWindow::updateChart()
     }//find max day duration
     m_axis_y->setRange(0,qreal(max)/60);
     for(qint16 i{0};i<m_sets.size();i++){
+        m_sets[i]->setBorderColor(QRgb(0xa9b0b7));
         m_series->append(m_sets[i]);
         connect(m_sets[i],SIGNAL(clicked(int)),
                 this,SLOT(s_showDay(int)));
