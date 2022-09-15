@@ -8,6 +8,7 @@
 #include <QMap>
 #include <QString>
 #include <QChart>
+#include <QFileDialog>
 
 #include <QtCharts/QChartView>
 #include <QtCharts/QStackedBarSeries>
@@ -16,8 +17,6 @@
 #include <QtCharts/QBarCategoryAxis>
 #include <QtCharts/QValueAxis>
 #include <QtCharts/QChart>
-
-#include "dirchoosedialog.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -37,7 +36,6 @@ public:
 
 private:
     Ui::MainWindow* ui;
-    dirChooseDialog* d;
 
     struct Record{
         qint16 batID;

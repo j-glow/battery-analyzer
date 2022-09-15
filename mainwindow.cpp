@@ -1,6 +1,5 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "dirchoosedialog.h"
 
 QT_CHARTS_USE_NAMESPACE
 
@@ -9,7 +8,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
-
+    this->setStyleSheet("background: #575d63");
 
     connect(ui->buttonFirst,SIGNAL(clicked()),
             this,SLOT(s_buttonFirst()));
@@ -46,14 +45,32 @@ void MainWindow::s_readData(QString path)
 
     if(!file.open(QIODevice::ReadOnly)){
         QMessageBox::warning(this, "Error", "Could not open file!");
-        s_loadFile();
+        return;
     }
 
     m_records.clear();
 
-    while (!file.atEnd()) {
+    qint16 count{0};
+    qint16 error{0};
+    while (!file.atEnd())
+    {
+        count++;
         auto list = file.readLine().split(',');
         Record record;
+        if(list.length()!=7){
+            error++;
+            continue;
+        }//check correct number of data inputs per line and correct divisor
+        for(const auto &i : list){
+            if(i.isEmpty()){
+                error++;
+                continue;
+            }
+        }//check if data isnt empty
+        if(list[1].split(' ')[0].length()!=10 || list[1].split(' ')[1].length()!=8){
+            error++;
+            continue;
+        }//check date string lenght
 
         record.batID=list[0].toInt();
         record.date=QDate::fromString(list[1].split(' ')[0], "dd.MM.yyyy");
@@ -64,16 +81,30 @@ void MainWindow::s_readData(QString path)
         record.current_mAh=list[5].toInt();
         record.power_mode=list[6].toInt();
 
+        if(record.time.isNull() || record.date.isNull() ||
+                record.batID==0 || record.duration_sec ==0 ||
+                record.voltage_start==0 || record.voltage_end==0 ||
+                record.current_mAh==0){
+            error++;
+            continue;
+        }//check if data was correctly loaded
+
         m_records << record;
     }
+    QMessageBox::information(this,QString("File loaded"),
+                             QString("Loaded ")+QString::number(count-error)+QString(" out of ")
+                             +QString::number(count)+QString(" record(s)."));
+
     file.close();
     fillTable();
+    s_rowClicked(0,0);
 }
 
 void MainWindow::configTable()
 {
     ui->batteryTable->QTableView::setEditTriggers(QAbstractItemView::NoEditTriggers);
     ui->batteryTable->horizontalHeader()->setMaximumSectionSize(80);
+
 }
 
 void MainWindow::fillTable()
@@ -122,9 +153,32 @@ void MainWindow::configChart()
     m_axis_x->setCategories(date);
 
     m_chart->axes(Qt::Vertical, m_series);
-    m_chart->setTitle("Choose battery from table in order to see its usage history");
     m_chart->setAnimationOptions(QChart::SeriesAnimations);
     m_chart->legend()->setVisible(false);
+
+    QLinearGradient backgroundGradient;
+    backgroundGradient.setStart(QPointF(0, 0));
+    backgroundGradient.setFinalStop(QPointF(0, 1));
+    backgroundGradient.setColorAt(0.0, QRgb(0x99c3ed));
+    backgroundGradient.setColorAt(1.0, QRgb(0x80b5ea));
+    backgroundGradient.setCoordinateMode(QGradient::ObjectBoundingMode);
+    m_chart->setBackgroundBrush(backgroundGradient);
+
+    QFont labelsFont;
+    labelsFont.setPixelSize(12);
+    m_axis_x->setLabelsFont(labelsFont);
+    m_axis_y->setLabelsFont(labelsFont);
+    labelsFont.setBold(true);
+    m_chart->setTitleFont(labelsFont);
+
+    QPen axisPen(QRgb(0x717c87));
+    axisPen.setWidth(2);
+    m_axis_x->setLinePen(axisPen);
+    m_axis_y->setLinePen(axisPen);
+    axisPen.setColor(QRgb(0xa9b0b7));
+    m_axis_x->setGridLinePen(axisPen);
+    m_axis_y->setGridLinePen(axisPen);
+
 }
 
 void MainWindow::s_rowClicked(int row, [[maybe_unused]]int column)
@@ -205,13 +259,15 @@ void MainWindow::updateChart()
     }//find max day duration
     m_axis_y->setRange(0,qreal(max)/60);
     for(qint16 i{0};i<m_sets.size();i++){
+        m_sets[i]->setBorderColor(QRgb(0xa9b0b7));
         m_series->append(m_sets[i]);
         connect(m_sets[i],SIGNAL(clicked(int)),
                 this,SLOT(s_showDay(int)));
     }
 
     m_chart->setTitle("BatteryID: "+QString::number(f_batteryDisplay));
-    ui->week_display->setText(f_weekDisplay.toString("dd.MM.yyyy") + " - " + f_weekDisplay.addDays(6).toString("dd.MM.yyyy"));
+    ui->week_display->setText(f_weekDisplay.toString("dd.MM.yyyy") + " - "
+                              + f_weekDisplay.addDays(6).toString("dd.MM.yyyy"));
     checkButtons();
 
     qint8 i{0};
@@ -273,7 +329,8 @@ void MainWindow::s_buttonPrev()
     }
 }
 
-void MainWindow::checkButtons(){
+void MainWindow::checkButtons()
+{
     QDate min=f_weekDisplay;
     QDate max=f_weekDisplay.addDays(6);
 
@@ -306,8 +363,15 @@ void MainWindow::checkButtons(){
 
 void MainWindow::s_showDay(int day)
 {
-    ui->day_indicator->setText("Battery: " + QString::number(f_batteryDisplay) +
-                               "\tDay: " +f_weekDisplay.addDays(day).toString("dd.MM.yyyy"));
+    if(f_batteryDisplay<10){
+        ui->day_indicator->setText("Battery: " + QString::number(f_batteryDisplay) +
+                                   "\t\tDay: " +f_weekDisplay.addDays(day).toString("dd.MM.yyyy"));
+    }
+    else{
+        ui->day_indicator->setText("Battery: " + QString::number(f_batteryDisplay) +
+                                   "\tDay: " +f_weekDisplay.addDays(day).toString("dd.MM.yyyy"));
+    }
+
     ui->recordTable->setRowCount(0);
     qint16 j=0;
     for(QList<Record>::Iterator i = m_records.begin(); i != m_records.end(); i++)
@@ -321,7 +385,7 @@ void MainWindow::s_showDay(int day)
             auto duration = new QTableWidgetItem;
 
             QString dur = QString::number(i->duration_sec/3600)+"h "+
-                    QString::number(i->duration_sec/60)+"min "+QString::number(i->duration_sec%60)+"s";
+                    QString::number(i->duration_sec/60%60)+"min "+QString::number(i->duration_sec%60)+"s";
 
             start->setData(Qt::EditRole,i->time.toString("hh:mm:ss"));
             finish->setData(Qt::EditRole,i->time.addSecs(i->duration_sec).toString("hh:mm:ss"));
@@ -335,10 +399,7 @@ void MainWindow::s_showDay(int day)
     }
 }
 
-void MainWindow::s_loadFile(){
-    d = new dirChooseDialog(this);
-    d->setModal(true);
-    d->show();
-    connect(d,SIGNAL(sendDir(QString)),
-            this,SLOT(s_readData(QString)));
+void MainWindow::s_loadFile()
+{
+    s_readData(QFileDialog::getOpenFileName(this,"Choose data file",QDir::homePath()));
 }
