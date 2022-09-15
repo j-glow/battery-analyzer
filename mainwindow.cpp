@@ -45,12 +45,13 @@ void MainWindow::s_readData(QString path)
 
     if(!file.open(QIODevice::ReadOnly)){
         QMessageBox::warning(this, "Error", "Could not open file!");
-        s_loadFile();
+        return;
     }
 
     m_records.clear();
 
-    while (!file.atEnd()) {
+    while (!file.atEnd())
+    {
         auto list = file.readLine().split(',');
         Record record;
 
@@ -371,5 +372,5 @@ void MainWindow::s_showDay(int day)
 
 void MainWindow::s_loadFile()
 {
-    s_readData(QFileDialog::getOpenFileName());
+    s_readData(QFileDialog::getOpenFileName(this,"Choose data file",QDir::homePath(),"Text files (*.txt)"));
 }
