@@ -50,10 +50,27 @@ void MainWindow::s_readData(QString path)
 
     m_records.clear();
 
+    qint16 count{0};
+    qint16 error{0};
     while (!file.atEnd())
     {
+        count++;
         auto list = file.readLine().split(',');
         Record record;
+        if(list.length()!=7){
+            error++;
+            continue;
+        }//check correct number of data inputs per line and correct divisor
+        for(const auto &i : list){
+            if(i.isEmpty()){
+                error++;
+                continue;
+            }
+        }//check if data isnt empty
+        if(list[1].split(' ')[0].length()!=10 || list[1].split(' ')[1].length()!=8){
+            error++;
+            continue;
+        }//check date string lenght
 
         record.batID=list[0].toInt();
         record.date=QDate::fromString(list[1].split(' ')[0], "dd.MM.yyyy");
@@ -64,8 +81,20 @@ void MainWindow::s_readData(QString path)
         record.current_mAh=list[5].toInt();
         record.power_mode=list[6].toInt();
 
+        if(record.time.isNull() || record.date.isNull() ||
+                record.batID==0 || record.duration_sec ==0 ||
+                record.voltage_start==0 || record.voltage_end==0 ||
+                record.current_mAh==0){
+            error++;
+            continue;
+        }//check if data was correctly loaded
+
         m_records << record;
     }
+    QMessageBox::information(this,QString("File loaded"),
+                             QString("Loaded ")+QString::number(count-error)+QString(" out of ")
+                             +QString::number(count)+QString(" record(s)."));
+
     file.close();
     fillTable();
     s_rowClicked(0,0);
@@ -372,5 +401,5 @@ void MainWindow::s_showDay(int day)
 
 void MainWindow::s_loadFile()
 {
-    s_readData(QFileDialog::getOpenFileName(this,"Choose data file",QDir::homePath(),"Text files (*.txt)"));
+    s_readData(QFileDialog::getOpenFileName(this,"Choose data file",QDir::homePath()));
 }

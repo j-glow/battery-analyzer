@@ -42,10 +42,10 @@
 	text-decoration:none;
 }
 .QPushButton:disabled{
-	background:#6daded;
+	background:#9fa3ab;
 }
 .QPushButton:pressed{
-	background:#2b75bf;
+	background:#6c2899;
 }
 
 .QLabel{
