@@ -60,17 +60,17 @@ void MainWindow::s_readData(QString path)
             Record record;
 
             if(list.length()<7){
-                throw;
+                throw -1;
             }
 
             for(const auto &i : list){
                 if(i.isEmpty()){
-                    throw;
+                    throw -1;
                 }
             }//check if data isnt empty
 
             if(list[1].split(' ')[0].length()!=10 || list[1].split(' ')[1].length()!=8){
-                throw;
+                throw -1;
             }//check date string lenght
 
             record.batID=list[0].toInt();
@@ -86,7 +86,7 @@ void MainWindow::s_readData(QString path)
                 record.batID==0 || record.duration_sec ==0 ||
                 record.voltage_start==0 || record.voltage_end==0 ||
                 record.current_mAh==0){
-                throw;
+                throw -1;
             }//check if data was correctly loaded
 
             m_records << record;

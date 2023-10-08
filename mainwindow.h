@@ -72,7 +72,7 @@ private slots:
     void s_buttonPrev();
     void s_loadFile();
     void s_showDay(int day);
-    void s_readData(QString path = "./battery.dat.txt");
+    void s_readData(QString path = "/home/kuba/battery-analyzer/data/battery.txt");
 };
 
 #endif // MAINWINDOW_H
