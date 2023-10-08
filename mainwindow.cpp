@@ -44,7 +44,7 @@ void MainWindow::s_readData(QString path)
 
 
     if(!file.open(QIODevice::ReadOnly)){
-        QMessageBox::warning(this, "Error", "Could not open file!");
+        QMessageBox::warning(this, "Error", "Could not open default data file!");
         return;
     }
 
@@ -55,41 +55,45 @@ void MainWindow::s_readData(QString path)
     while (!file.atEnd())
     {
         count++;
-        auto list = file.readLine().split(',');
-        Record record;
-        if(list.length()!=7){
-            error++;
-            continue;
-        }//check correct number of data inputs per line and correct divisor
-        for(const auto &i : list){
-            if(i.isEmpty()){
-                error++;
-                continue;
+        try{
+            auto list = file.readLine().split(',');
+            Record record;
+
+            if(list.length()<7){
+                throw;
             }
-        }//check if data isnt empty
-        if(list[1].split(' ')[0].length()!=10 || list[1].split(' ')[1].length()!=8){
-            error++;
-            continue;
-        }//check date string lenght
 
-        record.batID=list[0].toInt();
-        record.date=QDate::fromString(list[1].split(' ')[0], "dd.MM.yyyy");
-        record.time=QTime::fromString(list[1].split(' ')[1], "hh:mm:ss");
-        record.duration_sec=list[2].toInt();
-        record.voltage_start=list[3].toDouble();
-        record.voltage_end=list[4].toDouble();
-        record.current_mAh=list[5].toInt();
-        record.power_mode=list[6].toInt();
+            for(const auto &i : list){
+                if(i.isEmpty()){
+                    throw;
+                }
+            }//check if data isnt empty
 
-        if(record.time.isNull() || record.date.isNull() ||
+            if(list[1].split(' ')[0].length()!=10 || list[1].split(' ')[1].length()!=8){
+                throw;
+            }//check date string lenght
+
+            record.batID=list[0].toInt();
+            record.date=QDate::fromString(list[1].split(' ')[0], "dd.MM.yyyy");
+            record.time=QTime::fromString(list[1].split(' ')[1], "hh:mm:ss");
+            record.duration_sec=list[2].toInt();
+            record.voltage_start=list[3].toDouble();
+            record.voltage_end=list[4].toDouble();
+            record.current_mAh=list[5].toInt();
+            record.power_mode=list[6].toInt();
+
+            if(record.time.isNull() || record.date.isNull() ||
                 record.batID==0 || record.duration_sec ==0 ||
                 record.voltage_start==0 || record.voltage_end==0 ||
                 record.current_mAh==0){
-            error++;
-            continue;
-        }//check if data was correctly loaded
+                throw;
+            }//check if data was correctly loaded
 
-        m_records << record;
+            m_records << record;
+        }
+        catch(...){
+            error++;
+        }
     }
     QMessageBox::information(this,QString("File loaded"),
                              QString("Loaded ")+QString::number(count-error)+QString(" out of ")
